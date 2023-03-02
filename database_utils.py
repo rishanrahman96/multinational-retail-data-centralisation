@@ -5,6 +5,7 @@ import pandas as pd
 from sqlalchemy import create_engine,text
 from sqlalchemy import inspect
 
+
 class DatabaseConnector:
 
     def __init__ (self):
@@ -34,8 +35,20 @@ class DatabaseConnector:
         with open('db_creds.yaml') as f:
             data = yaml.load(f, Loader= SafeLoader)
         return self.init_db_engine(data)
-     
+    
+
+    def upload_to_db(self):
+        DATABASE_TYPE = 'postgresql'
+        DBAPI = 'psycopg2'
+        HOST = 'localhost'
+        USER = 'postgres'
+        PASSWORD = 'Verygood123!'
+        DATABASE = 'Sales_Data'
+        PORT = 5432
+        engine = create_engine(f"{DATABASE_TYPE}+{DBAPI}://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}")
+        return engine
+        
 
 
 # connector = DatabaseConnector()
-# connector.read_db_creds()
+# connector.upload_to_db()
