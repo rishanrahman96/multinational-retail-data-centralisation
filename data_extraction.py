@@ -15,8 +15,10 @@ class DataExtractor:
         connector = DatabaseConnector()
         engine = connector.read_db_creds()
         tables = connector.list_db_tables(engine)
-        table = pd.read_sql_table(tables[1],con = engine.connect(), index_col='index')
-        return table
+        user_table = pd.read_sql_table(tables[1],con = engine.connect(), index_col='index')
+        orders_table = pd.read_sql_table(tables[2],con = engine.connect(), index_col= 'index')
+        return user_table, orders_table
+
     
     def retrieve_pdf_data(self):
         pdf_path = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"

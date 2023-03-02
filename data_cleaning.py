@@ -17,7 +17,7 @@ class DataCleaning:
     def clean_user_data(self):
         x = DataExtractor()
 
-        table = x.read_dbs()
+        table = x.read_dbs()[0]
         table['first_name'] = table['first_name'].astype("string")
         table['last_name'] = table['last_name'].astype("string")
         table['company'] = table['company'].astype("string")
@@ -62,6 +62,7 @@ class DataCleaning:
 
         df3.to_sql('dim_card_details',self.engine, if_exists= 'replace')
 
+        
 
         #Cleaning store data 
 
@@ -139,6 +140,14 @@ class DataCleaning:
         products_df.to_sql('dim_products',self.engine,if_exists='replace')
 
 
+    def clean_orders_data(self):
+        x = DataExtractor()
+        orders_table = x.read_dbs()[1]
+        orders_table.drop(['level_0','first_name','last_name','1'],axis = 1,inplace=True)
+        orders_table.to_sql('orders_table',self.engine,if_exists='replace')
+        
+
+
 
     
         # connector = DatabaseConnector()
@@ -162,3 +171,5 @@ x = DataCleaning()
 x.clean_user_data()
 x.clean_products_data()
 x.clean_card_data()
+x.clean_orders_data()
+
