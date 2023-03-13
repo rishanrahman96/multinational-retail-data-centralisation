@@ -4,6 +4,8 @@ import pandas as pd
 from tabula.io import read_pdf
 import requests
 import boto3
+from urllib.request import urlopen
+import json
 
 
 class DataExtractor:
@@ -39,6 +41,26 @@ class DataExtractor:
             response = requests.get(f'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{i}', headers = Headers)
             stores.append(response.json())
         return stores
+    
+    def retrieve_date_events(self):
+
+        url = "https://data-handling-public.s3.eu-west-1.amazonaws.com/date_details.json"
+        df = pd.read_json(url)
+        return df
+
+
+# store the URL in url as 
+# # parameter for urlopen
+# url = "https://api.github.com"
+  
+# # store the response of URL
+# response = urlopen(url)
+  
+# # storing the JSON response 
+# # from url in data
+# data_json = json.loads(response.read())
+
+    
     
 
     #Commented out below to be efficient and not make the request lots of times.

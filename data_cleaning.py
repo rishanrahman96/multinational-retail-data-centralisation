@@ -135,7 +135,9 @@ class DataCleaning:
                 x = float(x.strip('oz'))/35.27
                 
 
-        products_df['weight (kg)'] =products_df.apply(lambda x: clean_weights(x['weight']),axis = 1)
+        products_df['weight_kg'] =products_df.apply(lambda x: clean_weights(x['weight']),axis = 1)
+        products_df.drop('weight', axis = 1, inplace=True)
+
 
         products_df.to_sql('dim_products',self.engine,if_exists='replace')
 
@@ -145,6 +147,29 @@ class DataCleaning:
         orders_table = x.read_dbs()[1]
         orders_table.drop(['level_0','first_name','last_name','1'],axis = 1,inplace=True)
         orders_table.to_sql('orders_table',self.engine,if_exists='replace')
+
+    def clean_date_events(self):
+        x = DataExtractor()
+        date_events_df = x.retrieve_date_events()
+        times_of_day = ['Evening','Midday','Morning','Late_Hours']
+        date_events_df['clean_rows'] = date_events_df['time_period'].isin(times_of_day)
+        date_events_df = date_events_df[~date_events_df['clean_rows'] == False]
+        date_events_df['month'] = date_events_df['month'].astype('int')
+        date_events_df['year'] = date_events_df['year'].astype('int')
+        date_events_df['day'] = date_events_df['day'].astype('int')
+        date_events_df['time_period'] = date_events_df['time_period'].astype('category')
+        date_events_df['date_uuid'] = date_events_df['date_uuid'].astype('string')
+        # df2['clean_months'] = df2['month'].isin(range(13))
+        # df2 = df2[df2['clean_months'] == False]
+        # df2['clean_days'] = df2['day'].isin(range(32))
+        # df2 = df2[df2['clean_days'] == False]
+        # df2['timestamp'] = pd.to_datetime(df2['timestamp'])
+        # df2['timestamp'].dt.strftime('%H:%M:%S')
+        date_events_df['timestamp'] = pd.to_datetime(date_events_df['timestamp'],errors = 'coerce', format = '%H:%M:%S')
+        date_events_df.drop('clean_rows',axis = 1,inplace=True)
+        date_events_df.to_sql('dim_date_times',self.engine,if_exists='replace')
+
+
         
 
 
@@ -172,4 +197,6 @@ x.clean_user_data()
 x.clean_products_data()
 x.clean_card_data()
 x.clean_orders_data()
+x.clean_store_data()
+x.clean_date_events()
 

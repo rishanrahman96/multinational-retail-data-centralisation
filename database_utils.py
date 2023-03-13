@@ -44,7 +44,7 @@ class DatabaseConnector:
         USER = 'postgres'
         PASSWORD = 'Verygood123!'
         DATABASE = 'Sales_Data'
-        PORT = 5432
+        PORT = 5431
         engine = create_engine(f"{DATABASE_TYPE}+{DBAPI}://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}")
         return engine
         
